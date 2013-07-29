@@ -1,0 +1,7 @@
+<Alloy>
+	<Window class="container" fullscreen="false" layout="vertical">
+		<TextField id="username" hintText="Username" width="Ti.UI.FILL" />
+		<TextField id="password" hintText="Password" width="Ti.UI.FILL" passwordMask="true" />
+		<Button id="submit" title="Sign in or register" onClick="this.submit"/>
+	</Window>
+</Alloy>
