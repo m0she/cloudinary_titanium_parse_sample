@@ -1,7 +1,11 @@
 _ = require("../underscore")
 
 cloudinary_config = undefined
-base_cloudinary_config = require('../cloudinary_config').config
+try
+  base_cloudinary_config = require('../cloudinary_config').config
+catch err
+  Ti.API.warn("Couldn't find configuration file 'cloudinary_config.js'")
+  base_cloudinary_config = {}
 
 module.exports = (new_config, new_value) ->
   if !cloudinary_config? || new_config == true
@@ -18,11 +22,7 @@ module.exports = (new_config, new_value) ->
         for k, v of require("querystring").parse(uri.query)
           cloudinary_config[k] = v
     else
-      try
-        cloudinary_config = _.clone base_cloudinary_config
-      catch err
-        console.log("Couldn't find configuration file 'cloudinary_config.js'")
-        cloudinary_config = {}
+      cloudinary_config = _.clone base_cloudinary_config
   if not _.isUndefined(new_value)
     cloudinary_config[new_config] = new_value
   else if _.isString(new_config)
