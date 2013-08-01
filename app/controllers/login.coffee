@@ -1,14 +1,5 @@
 require('ti.parse')
 
-setupParse = ->
-  Ti.API.info 'Parse: ' + Parse
-  Parse.initialize(
-    "my_app_id",
-    "my_js_key"
-  )
-
-setupParse()
-
 loggedIn = (user) ->
 
 @submit = (e) ->

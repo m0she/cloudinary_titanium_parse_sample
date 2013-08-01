@@ -4,3 +4,6 @@ build
 npm-debug.log
 tmp
 .map
+Resources
+app/lib/config.coffee
+app/lib/config.js

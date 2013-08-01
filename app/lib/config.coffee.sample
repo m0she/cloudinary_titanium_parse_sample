@@ -1,0 +1,6 @@
+exports.config =
+  cloudinary:
+    cloud_name: "my_cloud_name"
+  parse:
+    app_id: "my_app_id"
+    js_key: "my_javascript_key"

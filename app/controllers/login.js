@@ -1,14 +1,7 @@
 (function() {
-  var loggedIn, setupParse;
+  var loggedIn;
 
   require('ti.parse');
-
-  setupParse = function() {
-    Ti.API.info('Parse: ' + Parse);
-    return Parse.initialize("my_app_id", "my_js_key");
-  };
-
-  setupParse();
 
   loggedIn = function(user) {};
 
