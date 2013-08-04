@@ -1,14 +1,11 @@
-(function() {
-  var cloudinary, config;
+var cloudinary, config;
 
-  config = require('config').config;
+config = require('config').config;
 
-  require('/ti.parse');
+require('/ti.parse');
 
-  cloudinary = require('/lib/cloudinary');
+cloudinary = require('/lib/cloudinary');
 
-  Parse.initialize(config.parse.app_id, config.parse.js_key);
+Parse.initialize(config.parse.app_id, config.parse.js_key);
 
-  cloudinary.config(config.cloudinary);
-
-}).call(this);
+cloudinary.config(config.cloudinary);

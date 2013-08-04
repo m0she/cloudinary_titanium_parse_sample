@@ -3088,7 +3088,7 @@
      */
     _toPointer: function() {
       if (!this.id) {
-        throw new Error("Can't serialize an unsaved Parse.Object");
+        //throw new Error("Can't serialize an unsaved Parse.Object");
       }
       return { __type: "Pointer",
                className: this.className,

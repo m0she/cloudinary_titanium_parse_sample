@@ -1,4 +1,1 @@
-(function() {
-  Alloy.createController("login").getView().open();
-
-}).call(this);
+Alloy.createController("list_photos").getView().open();

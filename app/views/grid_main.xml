@@ -1,0 +1,7 @@
+<Alloy>
+	<View id="gridMain">
+		<View id="gridWrapper">
+			<ScrollView id="gridScrollView"/>
+		</View>	
+	</View>
+</Alloy>
