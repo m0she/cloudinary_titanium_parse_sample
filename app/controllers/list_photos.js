@@ -1,8 +1,10 @@
-var GridView, cloudinary, grid, init, url;
+var GridView, PhotoCollection, PhotoObject, cloudinary, config, grid, init, url;
 
 require('ti.parse');
 
 cloudinary = require('/lib/cloudinary');
+
+config = require('config').config;
 
 GridView = require('grid_view').GridView;
 
@@ -25,59 +27,24 @@ url = cloudinary.url('officialchucknorrispage', {
   ]
 });
 
+PhotoObject = Parse.Object.extend({
+  className: config.parse_model
+});
+
+PhotoCollection = Parse.Collection.extend({
+  model: PhotoObject,
+  initialze: this.query = new Parse.Query(PhotoObject).descending("createdAt")
+});
+
 init = function() {
   var collection;
-  collection = new Parse.Collection;
+  collection = new PhotoCollection;
   grid = new GridView({
     collection: collection,
     url: url
   });
   $.container.add(grid.getView());
-  return setTimeout(function() {
-    collection.reset([
-      {
-        title: 'sample 1',
-        remote: 'http://www.lorempixel.com/700/600/'
-      }, {
-        title: 'sample 2',
-        remote: 'http://www.lorempixel.com/900/1200/'
-      }, {
-        title: 'sample 3',
-        remote: 'http://www.lorempixel.com/400/300/'
-      }, {
-        title: 'sample 4',
-        remote: 'http://www.lorempixel.com/600/600/'
-      }, {
-        title: 'sample 5',
-        remote: 'http://www.lorempixel.com/400/300/'
-      }, {
-        title: 'sample 6',
-        remote: 'http://www.lorempixel.com/410/300/'
-      }, {
-        title: 'sample 7',
-        remote: 'http://www.lorempixel.com/500/300/'
-      }, {
-        title: 'sample 8',
-        remote: 'http://www.lorempixel.com/300/300/'
-      }, {
-        title: 'sample 9',
-        remote: 'http://www.lorempixel.com/450/320/'
-      }, {
-        title: 'sample 10',
-        url: url
-      }, {
-        title: 'sample 11',
-        url: url
-      }, {
-        title: 'sample 12',
-        url: url
-      }, {
-        title: 'sample 13',
-        url: url
-      }
-    ]);
-    return Ti.API.info("Resetted");
-  }, 3000);
+  return collection.fetch();
 };
 
 init();

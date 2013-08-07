@@ -104,6 +104,31 @@ exports.generate_transformation_string = generate_transformation_string = (optio
   base_transformations.push transformation
   _.filter(base_transformations, present).join "/"
 
+parseIdentifier = ///
+  ^
+    (?:([^/]+)/)??      # resource_type
+    (?:([^/]+)/)??      # type
+    (?:v(\d+)/)?        # version
+    (?:
+      ([^#/]+?)         # public_id
+      (?:\.([^.#/]+))? # fmt
+    )
+    (?:#([^/]+))?$      # signature
+///
+
+exports.url_from_identifier = cloudinary_url = (identifier, options = {}) ->
+  if (match = identifier.match parseIdentifier) == -1
+    throw new Error "Couldn't parse identifier: #{identifier}"
+
+  [all_match, resource_type, type, version, public_id, format, signature] = match
+  Ti.API.info JSON.stringify [identifier, match, all_match, resource_type, type, version, public_id, format, signature]
+  exports.url public_id, _.extend({},
+    resource_type: resource_type
+    type: type
+    version: version
+    format: format
+  , options)
+
 exports.url = cloudinary_url = (public_id, options = {}) ->
   type = option_consume(options, "type", "upload")
   options.fetch_format ?= option_consume(options, "format") if type is "fetch"

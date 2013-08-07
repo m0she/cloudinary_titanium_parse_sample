@@ -1,22 +1,14 @@
-var init;
+var cloudinary, config, init;
+
+cloudinary = require('/lib/cloudinary');
+
+config = require('config').config;
 
 init = function(options) {
-  var event, title, url, view, _i, _len, _ref, _results;
+  var cloudinary_options, event, identifier, title, url, view, _i, _len, _ref, _results;
   view = $.getView();
+  delete options.collection;
   Ti.API.info("Creating grid_child: " + (JSON.stringify(options)) + " " + view + " " + options.image);
-  if (options.remote) {
-    url = cloudinary.url(options.remote, {
-      type: 'fetch',
-      width: 100,
-      height: 100,
-      crop: 'fill'
-    });
-    Ti.API.info("Using remote url: " + options.remote + " - cloudinary url: " + url);
-    view.setImage(url);
-  } else if (options.url) {
-    Ti.API.info("Using given url: " + options.url);
-    view.setImage(options.url);
-  }
   if (options.space) {
     view.right = view.bottom = options.space;
   }
@@ -25,6 +17,17 @@ init = function(options) {
   }
   if (options.sideSize) {
     view.height = view.width = options.sideSize;
+  }
+  if ((identifier = options[config.parse_cloudinary_field])) {
+    cloudinary_options = {};
+    if (options.width > 1 && options.height > 1) {
+      cloudinary_options.width = options.width;
+      cloudinary_options.height = options.height;
+      cloudinary_options.crop = "fill";
+    }
+    url = cloudinary.utils.url_from_identifier(identifier, cloudinary_options);
+    Ti.API.info("Cloudinary url: " + url);
+    view.image = url;
   }
   _ref = ['error', 'load', 'postlayout', 'click'];
   _results = [];

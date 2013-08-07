@@ -17,6 +17,7 @@ init = ->
     ]
 
 loggedIn = (user) ->
+  Alloy.createController("list_photos").getView().open()
 
 failed = (error) ->
   Ti.UI.createAlertDialog

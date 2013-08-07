@@ -23,7 +23,9 @@ init = function() {
   }));
 };
 
-loggedIn = function(user) {};
+loggedIn = function(user) {
+  return Alloy.createController("list_photos").getView().open();
+};
 
 failed = function(error) {
   Ti.UI.createAlertDialog({

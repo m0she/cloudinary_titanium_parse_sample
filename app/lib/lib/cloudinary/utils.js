@@ -1,4 +1,4 @@
-var build_array, cloudinary_url, config, crc32, generate_transformation_string, html_only_attributes, option_consume, present, utf8_encode, _;
+var build_array, cloudinary_url, config, crc32, generate_transformation_string, html_only_attributes, option_consume, parseIdentifier, present, utf8_encode, _;
 
 _ = require("../underscore");
 
@@ -153,6 +153,26 @@ exports.generate_transformation_string = generate_transformation_string = functi
   })()).join(",");
   base_transformations.push(transformation);
   return _.filter(base_transformations, present).join("/");
+};
+
+parseIdentifier = /^(?:([^\/]+)\/)??(?:([^\/]+)\/)??(?:v(\d+)\/)?(?:([^#\/]+?)(?:\.([^.#\/]+))?)(?:#([^\/]+))?$/;
+
+exports.url_from_identifier = cloudinary_url = function(identifier, options) {
+  var all_match, format, match, public_id, resource_type, signature, type, version;
+  if (options == null) {
+    options = {};
+  }
+  if ((match = identifier.match(parseIdentifier)) === -1) {
+    throw new Error("Couldn't parse identifier: " + identifier);
+  }
+  all_match = match[0], resource_type = match[1], type = match[2], version = match[3], public_id = match[4], format = match[5], signature = match[6];
+  Ti.API.info(JSON.stringify([identifier, match, all_match, resource_type, type, version, public_id, format, signature]));
+  return exports.url(public_id, _.extend({}, {
+    resource_type: resource_type,
+    type: type,
+    version: version,
+    format: format
+  }, options));
 };
 
 exports.url = cloudinary_url = function(public_id, options) {
