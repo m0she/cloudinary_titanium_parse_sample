@@ -1,8 +1,5 @@
 <Alloy>
-	<Window fullscreen="false">
-    <View id="container">
-      <Label text="Hellllo" />
-      <ImageView id="xuy"/>
-    <View />
-	</Window>
+  <Window fullscreen="false">
+    <View id="container" />
+  </Window>
 </Alloy>

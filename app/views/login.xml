@@ -1,10 +1,10 @@
 <Alloy>
-	<Window class="container" fullscreen="false" layout="vertical">
-		<TextField id="username" hintText="Username" />
-		<TextField id="password" hintText="Password" passwordMask="true" />
+  <Window class="container" fullscreen="false" layout="vertical">
+    <TextField id="username" hintText="Username" />
+    <TextField id="password" hintText="Password" passwordMask="true" />
     <View layout="horizontal" id="signin_row">
       <ImageView id="poweredby" />
       <Button id="submit" title="Sign in or register" onClick="this.doSubmit" />
     </View>
-	</Window>
+  </Window>
 </Alloy>
