@@ -28,7 +28,14 @@
             <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
         </orientations>
     </iphone>
-    <android xmlns:android="http://schemas.android.com/apk/res/android"/>
+    <android xmlns:android="http://schemas.android.com/apk/res/android">
+      <manifest>
+        <application android:icon="@drawable/appicon"
+          android:label="Photo Album"
+          android:debuggable="true">
+        </application>
+      </manifest>
+    </android>
     <mobileweb>
         <precache/>
         <splash>

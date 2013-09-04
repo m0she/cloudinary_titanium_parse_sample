@@ -5,8 +5,10 @@ cloudinary = require('/lib/cloudinary');
 config = require('config').config;
 
 init = function(options) {
-  var cloudinary_options, event, identifier, title, url, view, _i, _len, _ref, _results;
+  var cloudinary_options, event, identifier, title, url, view, _i, _len, _ref, _results,
+    _this = this;
   view = $.getView();
+  options = _.clone(options);
   delete options.collection;
   Ti.API.info("Creating grid_child: " + (JSON.stringify(options)) + " " + view + " " + options.image);
   if (options.space) {
@@ -16,18 +18,21 @@ init = function(options) {
     view.padding = options.padding;
   }
   if (options.sideSize) {
-    view.height = view.width = options.sideSize;
+    view.height = view.width = options.height = options.width = options.sideSize;
   }
   if ((identifier = options[config.parse_cloudinary_field])) {
     cloudinary_options = {};
     if (options.width > 1 && options.height > 1) {
-      cloudinary_options.width = options.width;
-      cloudinary_options.height = options.height;
+      cloudinary_options.width = parseInt(options.width);
+      cloudinary_options.height = parseInt(options.height);
       cloudinary_options.crop = "fill";
     }
     url = cloudinary.utils.url_from_identifier(identifier, cloudinary_options);
     Ti.API.info("Cloudinary url: " + url);
     view.image = url;
+    view.addEventListener('click', function() {
+      return Alloy.createController("show_photo", identifier).getView().open();
+    });
   }
   _ref = ['error', 'load', 'postlayout', 'click'];
   _results = [];

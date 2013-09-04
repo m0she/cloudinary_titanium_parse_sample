@@ -1,4 +1,4 @@
-var GridView, PhotoCollection, PhotoObject, cloudinary, config, grid, init, url;
+var GridView, PhotoCollection, PhotoObject, cloudinary, config, grid, init;
 
 require('ti.parse');
 
@@ -10,23 +10,6 @@ GridView = require('grid_view').GridView;
 
 grid = void 0;
 
-url = cloudinary.url('officialchucknorrispage', {
-  type: 'facebook',
-  format: 'png',
-  transformation: [
-    {
-      height: 95,
-      width: 95,
-      crop: 'thumb',
-      gravity: 'face',
-      effect: 'sepia',
-      radius: 20
-    }, {
-      angle: 10
-    }
-  ]
-});
-
 PhotoObject = Parse.Object.extend({
   className: config.parse_model
 });
@@ -37,14 +20,25 @@ PhotoCollection = Parse.Collection.extend({
 });
 
 init = function() {
-  var collection;
+  var collection, event, title, _i, _len, _ref, _results;
   collection = new PhotoCollection;
   grid = new GridView({
-    collection: collection,
-    url: url
+    collection: collection
   });
   $.container.add(grid.getView());
-  return collection.fetch();
+  collection.fetch();
+  _ref = ['open', 'close', 'postlayout', 'focus'];
+  _results = [];
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    event = _ref[_i];
+    title = 'list_photos - ';
+    _results.push((function(event) {
+      return $.getView().addEventListener(event, function(data) {
+        return Ti.API.log("" + title + " " + event + ": " + data);
+      });
+    })(event));
+  }
+  return _results;
 };
 
 init();

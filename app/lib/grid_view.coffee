@@ -28,6 +28,9 @@ class exports.CollectionView
     @digestOptions @options
     @container.getView().hide()
     @container.clear()
+    # DEBUG -
+    #for index in [0..10]
+    #  @container.addChild @createChild(@collection.at(index).toJSON()).getView() if @collection.length > index
     @collection.each (model) =>
       @container.addChild @createChild(model.toJSON()).getView()
     @container.getView().show()

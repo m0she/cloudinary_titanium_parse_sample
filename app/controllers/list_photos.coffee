@@ -4,20 +4,6 @@ config = require('config').config
 GridView = require('grid_view').GridView
 grid = undefined
 
-url = cloudinary.url 'officialchucknorrispage',
-  type: 'facebook'
-  format: 'png'
-  transformation: [
-    height: 95
-    width: 95
-    crop: 'thumb'
-    gravity: 'face'
-    effect: 'sepia'
-    radius: 20
-  ,
-    angle: 10
-  ]
-
 PhotoObject = Parse.Object.extend
   className: config.parse_model
 
@@ -30,9 +16,13 @@ init = ->
   collection = new PhotoCollection
   grid = new GridView
     collection: collection
-    url: url
   $.container.add grid.getView()
   collection.fetch()
+
+  # Debug:
+  for event in ['open', 'close', 'postlayout', 'focus']
+    title = 'list_photos - '
+    do (event) -> $.getView().addEventListener event, (data) -> Ti.API.log "#{title} #{event}: #{data}"
 
 init()
 Ti.API.info "Loaded"

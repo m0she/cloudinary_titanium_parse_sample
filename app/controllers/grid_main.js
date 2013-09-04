@@ -1,6 +1,7 @@
 var defaults, init;
 
 this.clear = function() {
+  Ti.API.info("Clearing all children");
   return $.gridScrollView.removeAllChildren();
 };
 

@@ -1,4 +1,7 @@
-@clear = -> $.gridScrollView.removeAllChildren()
+@clear = ->
+  Ti.API.info "Clearing all children"
+  $.gridScrollView.removeAllChildren()
+
 @addChild = (child) ->
   Ti.API.info "grid_main - adding child #{child} #{$.gridScrollView.children.length}"
   $.gridScrollView.add child
