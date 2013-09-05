@@ -12,7 +12,9 @@ _ = require('alloy/underscore')._;
 */
 
 
-exports.CollectionView = (function() {
+exports.CollectionView = (function(_super) {
+  __extends(CollectionView, _super);
+
   function CollectionView(options) {
     var lastWidth,
       _this = this;
@@ -33,7 +35,7 @@ exports.CollectionView = (function() {
     });
   }
 
-  CollectionView.prototype.createContainer = function(controller) {
+  CollectionView.prototype.createContainer = function() {
     return Alloy.createController(this.options.containerController, this.options);
   };
 
@@ -50,7 +52,8 @@ exports.CollectionView = (function() {
     this.collection.each(function(model) {
       return _this.container.addChild(_this.createChild(model.toJSON()).getView());
     });
-    return this.container.getView().show();
+    this.container.getView().show();
+    return Ti.App.fireEvent('render');
   };
 
   CollectionView.prototype.getView = function() {
@@ -69,7 +72,7 @@ exports.CollectionView = (function() {
 
   return CollectionView;
 
-})();
+})(Parse.Events);
 
 exports.GridView = (function(_super) {
   __extends(GridView, _super);

@@ -1,23 +1,10 @@
-var GridView, PhotoCollection, PhotoObject, cloudinary, config, grid, init;
-
-require('ti.parse');
-
-cloudinary = require('/lib/cloudinary');
-
-config = require('config').config;
+var GridView, PhotoCollection, grid, init;
 
 GridView = require('grid_view').GridView;
 
 grid = void 0;
 
-PhotoObject = Parse.Object.extend({
-  className: config.parse_model
-});
-
-PhotoCollection = Parse.Collection.extend({
-  model: PhotoObject,
-  initialze: this.query = new Parse.Query(PhotoObject).descending("createdAt")
-});
+PhotoCollection = require('parse_photo_album').PhotoCollection;
 
 init = function() {
   var collection, event, title, _i, _len, _ref, _results;
@@ -27,6 +14,19 @@ init = function() {
   });
   $.container.add(grid.getView());
   collection.fetch();
+  Ti.App.addEventListener('render', function() {
+    var options, view;
+    Ti.API.info("Render event");
+    options = _.extend({
+      image_path: '/images/add_new_photo.png'
+    }, grid.options);
+    view = Alloy.createController('grid_child', options).getView();
+    grid.container.addChild(view);
+    return view.on('click', function() {
+      Ti.API.info("Add new clicked");
+      return Alloy.createController("upload_photo").getView().open();
+    });
+  });
   _ref = ['open', 'close', 'postlayout', 'focus'];
   _results = [];
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {

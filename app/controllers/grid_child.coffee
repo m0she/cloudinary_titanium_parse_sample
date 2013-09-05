@@ -22,7 +22,8 @@ init = (options) ->
     view.image = url
     view.addEventListener 'click', =>
       Alloy.createController("show_photo", identifier).getView().open()
-
+  else if options.image_path
+    view.image = options.image_path
 
   # Debug:
   for event in ['error', 'load', 'postlayout', 'click']

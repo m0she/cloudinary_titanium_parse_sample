@@ -1,16 +1,6 @@
-require 'ti.parse'
-cloudinary = require '/lib/cloudinary'
-config = require('config').config
 GridView = require('grid_view').GridView
 grid = undefined
-
-PhotoObject = Parse.Object.extend
-  className: config.parse_model
-
-PhotoCollection = Parse.Collection.extend
-  model: PhotoObject
-  initialze:
-    @query = new Parse.Query(PhotoObject).descending "createdAt"
+PhotoCollection = require('parse_photo_album').PhotoCollection
 
 init = ->
   collection = new PhotoCollection
@@ -18,6 +8,15 @@ init = ->
     collection: collection
   $.container.add grid.getView()
   collection.fetch()
+
+  Ti.App.addEventListener 'render', ->
+    Ti.API.info "Render event"
+    options = _.extend image_path: '/images/add_new_photo.png', grid.options
+    view = Alloy.createController('grid_child', options).getView()
+    grid.container.addChild view
+    view.on 'click', ->
+      Ti.API.info "Add new clicked"
+      Alloy.createController("upload_photo").getView().open()
 
   # Debug:
   for event in ['open', 'close', 'postlayout', 'focus']

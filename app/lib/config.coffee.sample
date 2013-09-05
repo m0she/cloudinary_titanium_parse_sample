@@ -4,3 +4,7 @@ exports.config =
   parse:
     app_id: "my_app_id"
     js_key: "my_javascript_key"
+  parse_model: "Photo"
+  parse_sign_cloud_function: "sign_upload_request"
+  parse_cloudinary_field: "cloudinary_identifier"
+

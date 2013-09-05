@@ -6,7 +6,7 @@ _ = require('alloy/underscore')._
     childController: 'child_name'
     collection: new Backbone.Collection
 ###
-class exports.CollectionView
+class exports.CollectionView extends Parse.Events
   constructor: (options) ->
     @options = _.extend {}, @defaults, options
     @collection = @options.collection
@@ -20,7 +20,7 @@ class exports.CollectionView
         @render()
         lastWidth = newWidth
 
-  createContainer: (controller) -> Alloy.createController @options.containerController, @options
+  createContainer: () -> Alloy.createController @options.containerController, @options
   createChild: (params) -> Alloy.createController @options.childController, _.extend {}, @options, params
 
   render: ->
@@ -34,6 +34,7 @@ class exports.CollectionView
     @collection.each (model) =>
       @container.addChild @createChild(model.toJSON()).getView()
     @container.getView().show()
+    Ti.App.fireEvent 'render'
 
   getView: -> @container.getView()
 

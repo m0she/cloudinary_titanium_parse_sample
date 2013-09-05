@@ -33,6 +33,8 @@ init = function(options) {
     view.addEventListener('click', function() {
       return Alloy.createController("show_photo", identifier).getView().open();
     });
+  } else if (options.image_path) {
+    view.image = options.image_path;
   }
   _ref = ['error', 'load', 'postlayout', 'click'];
   _results = [];

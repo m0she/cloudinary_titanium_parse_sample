@@ -1,0 +1,7 @@
+<Alloy>
+  <Window fullscreen="false" id="toplevel">
+    <View class="container">
+      <Label text="TEXT" color="#f00">
+    </View>
+  </Window>
+</Alloy>
