@@ -6,7 +6,9 @@ config = require("./config");
 
 exports.CF_SHARED_CDN = "d3jpl91pxevbkh.cloudfront.net";
 
-exports.AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net";
+exports.OLD_AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net";
+
+exports.AKAMAI_SHARED_CDN = "res.cloudinary.com";
 
 exports.SHARED_CDN = exports.AKAMAI_SHARED_CDN;
 
@@ -166,7 +168,6 @@ exports.url_from_identifier = cloudinary_url = function(identifier, options) {
     throw new Error("Couldn't parse identifier: " + identifier);
   }
   all_match = match[0], resource_type = match[1], type = match[2], version = match[3], public_id = match[4], format = match[5], signature = match[6];
-  Ti.API.info(JSON.stringify([identifier, match, all_match, resource_type, type, version, public_id, format, signature]));
   return exports.url(public_id, _.extend({}, {
     resource_type: resource_type,
     type: type,
@@ -176,7 +177,7 @@ exports.url_from_identifier = cloudinary_url = function(identifier, options) {
 };
 
 exports.url = cloudinary_url = function(public_id, options) {
-  var cdn_subdomain, cloud_name, cname, format, host, prefix, private_cdn, resource_type, secure, secure_distribution, shorten, subdomain, transformation, type, url, version;
+  var cdn_subdomain, cloud_name, cname, format, host, prefix, private_cdn, resource_type, secure, secure_distribution, shared_domain, shorten, subdomain, transformation, type, url, version;
   if (options == null) {
     options = {};
   }
@@ -200,25 +201,30 @@ exports.url = cloudinary_url = function(public_id, options) {
   cdn_subdomain = option_consume(options, "cdn_subdomain", config().cdn_subdomain);
   cname = option_consume(options, "cname", config().cname);
   shorten = option_consume(options, "shorten", config().shorten);
-  if (secure_distribution == null) {
-    secure_distribution = exports.SHARED_CDN;
-  }
   if (public_id.match(/^https?:/)) {
     if (type === "upload" || type === "asset") {
       return public_id;
     }
     public_id = encodeURIComponent(public_id).replace(/%3A/g, ":").replace(/%2F/g, "/");
-  } else if (format) {
-    public_id += "." + format;
+  } else {
+    public_id = encodeURIComponent(decodeURIComponent(public_id)).replace(/%3A/g, ":").replace(/%2F/g, "/");
+    if (format) {
+      public_id += "." + format;
+    }
   }
+  shared_domain = !private_cdn;
   if (secure) {
+    if (!secure_distribution || secure_distribution === exports.OLD_AKAMAI_SHARED_CDN) {
+      secure_distribution = (private_cdn ? "" + cloud_name + "-res.cloudinary.com" : exports.SHARED_CDN);
+    }
+    shared_domain || (shared_domain = secure_distribution === exports.SHARED_CDN);
     prefix = "https://" + secure_distribution;
   } else {
     subdomain = (cdn_subdomain ? "a" + ((crc32(public_id) % 5) + 1) + "." : "");
     host = cname != null ? cname : "" + (private_cdn ? "" + cloud_name + "-" : "") + "res.cloudinary.com";
     prefix = "http://" + subdomain + host;
   }
-  if (!private_cdn || (secure && secure_distribution === exports.AKAMAI_SHARED_CDN)) {
+  if (shared_domain) {
     prefix += "/" + cloud_name;
   }
   if (shorten && resource_type === "image" && type === "upload") {
@@ -363,17 +369,14 @@ exports.api_sign_request = function(params_to_sign, api_secret) {
   return Ti.Utils.sha1(to_sign + api_secret);
 };
 
-exports.private_download_url = function(public_id, format, options) {
-  var api_key, api_secret, k, params, v, _ref, _ref1;
-  if (options == null) {
-    options = {};
-  }
+exports.sign_request = function(params, options) {
+  var api_key, api_secret, k, v, _ref, _ref1;
   api_key = (function() {
     var _ref1;
     if ((_ref = (_ref1 = options.api_key) != null ? _ref1 : config().api_key) != null) {
       return _ref;
     } else {
-      throw new Error("Must supply api_key");
+      throw "Must supply api_key";
     }
   })();
   api_secret = (function() {
@@ -381,17 +384,9 @@ exports.private_download_url = function(public_id, format, options) {
     if ((_ref1 = (_ref2 = options.api_secret) != null ? _ref2 : config().api_secret) != null) {
       return _ref1;
     } else {
-      throw new Error("Must supply api_secret");
+      throw "Must supply api_secret";
     }
   })();
-  params = {
-    timestamp: exports.timestamp(),
-    public_id: public_id,
-    format: format,
-    type: options.type,
-    attachment: options.attachment,
-    expires_at: options.expires_at
-  };
   for (k in params) {
     v = params[k];
     if (!exports.present(v)) {
@@ -401,6 +396,19 @@ exports.private_download_url = function(public_id, format, options) {
   params.signature = exports.api_sign_request(params, api_secret);
   params.api_key = api_key;
   return exports.api_url("download", options) + "?" + exports.querystring.stringify(params);
+};
+
+exports.zip_download_url = function(tag, options) {
+  var params;
+  if (options == null) {
+    options = {};
+  }
+  params = exports.sign_request({
+    timestamp: exports.timestamp(),
+    tag: tag,
+    transformation: exports.generate_transformation_string(options)
+  }, options);
+  return exports.api_url("download_tag.zip", options) + "?" + exports.querystring.stringify(params);
 };
 
 exports.html_attrs = function(options) {

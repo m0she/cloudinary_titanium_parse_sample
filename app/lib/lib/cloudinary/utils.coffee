@@ -2,7 +2,8 @@ _ = require("../underscore")
 config = require("./config")
 
 exports.CF_SHARED_CDN = "d3jpl91pxevbkh.cloudfront.net"
-exports.AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net"
+exports.OLD_AKAMAI_SHARED_CDN = "cloudinary-a.akamaihd.net"
+exports.AKAMAI_SHARED_CDN = "res.cloudinary.com"
 exports.SHARED_CDN = exports.AKAMAI_SHARED_CDN
 
 exports.timestamp = ->
@@ -121,7 +122,6 @@ exports.url_from_identifier = cloudinary_url = (identifier, options = {}) ->
     throw new Error "Couldn't parse identifier: #{identifier}"
 
   [all_match, resource_type, type, version, public_id, format, signature] = match
-  Ti.API.info JSON.stringify [identifier, match, all_match, resource_type, type, version, public_id, format, signature]
   exports.url public_id, _.extend({},
     resource_type: resource_type
     type: type
@@ -144,21 +144,25 @@ exports.url = cloudinary_url = (public_id, options = {}) ->
   cdn_subdomain = option_consume(options, "cdn_subdomain", config().cdn_subdomain)
   cname = option_consume(options, "cname", config().cname)
   shorten = option_consume(options, "shorten", config().shorten)
-  secure_distribution ?= exports.SHARED_CDN
 
   if public_id.match(/^https?:/)
     return public_id if type is "upload" or type is "asset"
     public_id = encodeURIComponent(public_id).replace(/%3A/g, ":").replace(/%2F/g, "/")
-  else if format
-    public_id += "." + format
+  else
+    public_id = encodeURIComponent(decodeURIComponent(public_id)).replace(/%3A/g, ":").replace(/%2F/g, "/")
+    public_id += "." + format if format
 
+  shared_domain = !private_cdn
   if secure
+    if !secure_distribution || secure_distribution == exports.OLD_AKAMAI_SHARED_CDN
+      secure_distribution = (if private_cdn then "#{cloud_name}-res.cloudinary.com" else exports.SHARED_CDN)
+    shared_domain ||= secure_distribution == exports.SHARED_CDN
     prefix = "https://#{secure_distribution}"
   else
     subdomain = (if cdn_subdomain then "a#{(crc32(public_id) % 5) + 1}." else "")
     host = cname ? "#{if private_cdn then "#{cloud_name}-" else ""}res.cloudinary.com"
     prefix = "http://#{subdomain}#{host}"
-  prefix += "/#{cloud_name}" if !private_cdn || (secure && secure_distribution == exports.AKAMAI_SHARED_CDN)
+  prefix += "/#{cloud_name}" if shared_domain
 
   if shorten && resource_type == "image" && type == "upload"
     resource_type = "iu"
@@ -266,18 +270,9 @@ exports.api_sign_request = (params_to_sign, api_secret) ->
   to_sign = _.sortBy("#{k}=#{build_array(v).join(",")}" for k, v of params_to_sign when v, _.identity).join("&")
   Ti.Utils.sha1(to_sign + api_secret)
 
-exports.private_download_url = (public_id, format, options = {}) ->
-  api_key = options.api_key ? config().api_key ? throw new Error("Must supply api_key")
-  api_secret = options.api_secret ? config().api_secret ? throw new Error("Must supply api_secret")
-
-  params = {
-    timestamp: exports.timestamp(),
-    public_id: public_id,
-    format: format,
-    type: options.type,
-    attachment: options.attachment,
-    expires_at: options.expires_at
-  }
+exports.sign_request = (params, options) ->
+  api_key = options.api_key ? config().api_key ? throw("Must supply api_key")
+  api_secret = options.api_secret ? config().api_secret ? throw("Must supply api_secret")
   # Remove blank parameters
   for k, v of params when not exports.present(v)
     delete params[k]
@@ -286,6 +281,15 @@ exports.private_download_url = (public_id, format, options = {}) ->
   params.api_key = api_key
 
   return exports.api_url("download", options) + "?" + exports.querystring.stringify(params)
+
+exports.zip_download_url = (tag, options = {}) ->
+  params = exports.sign_request({
+    timestamp: exports.timestamp(),
+    tag: tag,
+    transformation: exports.generate_transformation_string(options)
+  }, options)
+
+  return exports.api_url("download_tag.zip", options) + "?" + exports.querystring.stringify(params)
 
 exports.html_attrs = (options) ->
   keys = _.sortBy(_.keys(options), _.identity)
