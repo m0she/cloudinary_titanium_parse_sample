@@ -1,4 +1,12 @@
-
-".container" : {
-  
+"#image" : {
+	width: Ti.UI.SIZE,
+	height: Ti.UI.SIZE
+},
+"#label" : {
+  top: 0,
+	width: Ti.UI.SIZE,
+  height: Ti.UI.SIZE,
+  font: { fontSize: 30 },
+  zIndex: 2,
+  color: "#e0e"
 }

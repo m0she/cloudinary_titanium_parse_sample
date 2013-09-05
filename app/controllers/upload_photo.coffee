@@ -30,6 +30,7 @@ upload_image = (image) ->
         obj.save null,
           success: ->
             Ti.API.info "Model save successful!"
+            $.getView().fireEvent "uploaded_image"
             $.getView().close()
           error: (error) ->
             handle_error(error)
@@ -45,7 +46,9 @@ pick_image = ->
   Ti.Media.openPhotoGallery
     mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO]
     success: (data) -> upload_image(data)
-    error: -> Ti.API.info 'pick_image error'
-    cancel: -> Ti.API.info 'pick_image cancel'
+    error: -> (error) -> handle_error(error)
+    cancel: ->
+      Ti.API.info 'pick_image cancel'
+      $.getView().close()
 
 $.getView().addEventListener 'open', -> pick_image()

@@ -1,58 +1,65 @@
-var init, transformations;
+var get_transformations, identifier, lastWidth, render,
+  _this = this;
 
-transformations = [
-  ["Original", {}], [
-    "Round fill", {
-      width: 400,
-      height: 700,
-      crop: "fill",
-      radius: 10
-    }
-  ], [
-    "Scale", {
-      width: 400,
-      height: 700,
-      crop: "scale"
-    }
-  ], [
-    "Fit", {
-      width: 400,
-      height: 700,
-      crop: "fit"
-    }
-  ], [
-    "Thumb + face", {
-      width: 400,
-      height: 700,
-      crop: "thumb",
-      gravity: "face"
-    }
-  ], [
-    "Shabang", {
-      transformation: [
-        {
-          width: 400,
-          height: 700,
-          crop: "fill",
-          gravity: "north"
-        }, {
-          angle: 20
-        }, {
-          effect: "sepia"
-        }
-      ]
-    }
-  ]
-];
+identifier = arguments[0];
 
-init = function(identifier) {
-  var event, name_transformation, scrollable, tabs, title, _i, _len, _ref, _results;
+get_transformations = function(width, height) {
+  return [
+    ["Original", {}], [
+      "Round fill", {
+        width: width,
+        height: height,
+        crop: "fill",
+        radius: 30
+      }
+    ], [
+      "Scale", {
+        width: width,
+        height: height,
+        crop: "scale"
+      }
+    ], [
+      "Fit", {
+        width: width,
+        height: height,
+        crop: "fit"
+      }
+    ], [
+      "Thumb + face", {
+        width: width,
+        height: height,
+        crop: "thumb",
+        gravity: "face"
+      }
+    ], [
+      "Shabang", {
+        transformation: [
+          {
+            width: width,
+            height: height,
+            crop: "fill",
+            gravity: "north"
+          }, {
+            angle: 20
+          }, {
+            effect: "sepia"
+          }
+        ]
+      }
+    ]
+  ];
+};
+
+render = function() {
+  var event, name_transformation, scrollable, size, tabs, title, _i, _len, _ref, _results;
+  size = $.getView().size;
   Ti.API.info("Showing photo: " + identifier);
   tabs = (function() {
-    var _i, _len, _results;
+    var _i, _len, _ref, _results;
+    _ref = get_transformations(size.width - 10, size.height - 10);
     _results = [];
-    for (_i = 0, _len = transformations.length; _i < _len; _i++) {
-      name_transformation = transformations[_i];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      name_transformation = _ref[_i];
       _results.push(Alloy.createController("image_tab", {
         identifier: identifier,
         name: name_transformation[0],
@@ -68,6 +75,9 @@ init = function(identifier) {
     height: Ti.UI.FILL,
     width: Ti.UI.FILL
   });
+  while ($.toplevel.children.length > 0) {
+    $.toplevel.remove($.toplevel.children[0]);
+  }
   $.toplevel.add(scrollable);
   _ref = ['open', 'close', 'postlayout', 'focus'];
   _results = [];
@@ -83,4 +93,17 @@ init = function(identifier) {
   return _results;
 };
 
-init.apply(this, arguments);
+lastWidth = 0;
+
+$.getView().addEventListener('postlayout', function(e) {
+  var newWidth;
+  newWidth = $.getView().size.width;
+  if (lastWidth !== newWidth && newWidth > 0) {
+    render();
+    return lastWidth = newWidth;
+  }
+});
+
+if (Ti.Platform.osname === 'android') {
+  $.getView().navBarHidden = true;
+}

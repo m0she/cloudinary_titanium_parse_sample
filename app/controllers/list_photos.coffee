@@ -16,7 +16,10 @@ init = ->
     grid.container.addChild view
     view.on 'click', ->
       Ti.API.info "Add new clicked"
-      Alloy.createController("upload_photo").getView().open()
+      upload_photo = Alloy.createController("upload_photo")
+      upload_photo.getView().open()
+      upload_photo.getView().addEventListener "uploaded_image", ->
+        collection.fetch()
 
   # Debug:
   for event in ['open', 'close', 'postlayout', 'focus']
@@ -24,4 +27,6 @@ init = ->
     do (event) -> $.getView().addEventListener event, (data) -> Ti.API.log "#{title} #{event}: #{data}"
 
 init()
+if Ti.Platform.osname == 'android'
+  $.getView().navBarHidden = true
 Ti.API.info "Loaded"

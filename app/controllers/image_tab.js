@@ -7,7 +7,8 @@ init = function(options) {
   }, options.transformation);
   url = cloudinary.utils.url_from_identifier(options.identifier, transformation);
   Ti.API.info("Tab create " + (JSON.stringify(options)) + " - url: " + url);
-  return $.getView().image = url;
+  $.image.image = url;
+  return $.label.text = options.name;
 };
 
 init.apply(this, arguments);

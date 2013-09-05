@@ -1,5 +1,5 @@
 <Alloy>
-  <Window class="container" fullscreen="false" layout="vertical">
+  <Window class="container" fullscreen="false" layout="vertical" exitOnClose="true">
     <TextField id="username" hintText="Username" />
     <TextField id="password" hintText="Password" passwordMask="true" />
     <View layout="horizontal" id="signin_row">

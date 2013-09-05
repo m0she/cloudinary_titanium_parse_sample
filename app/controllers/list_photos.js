@@ -23,8 +23,13 @@ init = function() {
     view = Alloy.createController('grid_child', options).getView();
     grid.container.addChild(view);
     return view.on('click', function() {
+      var upload_photo;
       Ti.API.info("Add new clicked");
-      return Alloy.createController("upload_photo").getView().open();
+      upload_photo = Alloy.createController("upload_photo");
+      upload_photo.getView().open();
+      return upload_photo.getView().addEventListener("uploaded_image", function() {
+        return collection.fetch();
+      });
     });
   });
   _ref = ['open', 'close', 'postlayout', 'focus'];
@@ -42,5 +47,9 @@ init = function() {
 };
 
 init();
+
+if (Ti.Platform.osname === 'android') {
+  $.getView().navBarHidden = true;
+}
 
 Ti.API.info("Loaded");

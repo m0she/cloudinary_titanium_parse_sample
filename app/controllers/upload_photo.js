@@ -41,6 +41,7 @@ upload_image = function(image) {
         obj.save(null, {
           success: function() {
             Ti.API.info("Model save successful!");
+            $.getView().fireEvent("uploaded_image");
             return $.getView().close();
           },
           error: function(error) {
@@ -64,10 +65,13 @@ pick_image = function() {
       return upload_image(data);
     },
     error: function() {
-      return Ti.API.info('pick_image error');
+      return function(error) {
+        return handle_error(error);
+      };
     },
     cancel: function() {
-      return Ti.API.info('pick_image cancel');
+      Ti.API.info('pick_image cancel');
+      return $.getView().close();
     }
   });
 };

@@ -1,3 +1,5 @@
 <Alloy>
-  <Window fullscreen="false" id="toplevel" />
+  <Window fullscreen="false">
+    <View id="toplevel" />
+  </Window>
 </Alloy>
