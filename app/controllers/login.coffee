@@ -29,30 +29,30 @@ failed = (error) ->
 
 @doSubmit = (e) ->
   $.submit.enabled = false
-  Ti.API.info('submit: ' + JSON.stringify $.submit)
+  Ti.API.debug 'login submit'
   query = new Parse.Query(Parse.User).equalTo "username", $.username.value
   query.count
     success: (result) ->
-      Ti.API.info('Count: ' + JSON.stringify result)
+      Ti.API.debug 'Count: ' + JSON.stringify result
       if result == 0
         user = new Parse.User
         user.set "username", $.username.value
         user.set "password", $.password.value
         user.signUp null,
           success: (user) ->
-            Ti.API.info "Signed up: " + JSON.stringify user
+            Ti.API.debug "Signed up: " + JSON.stringify user
             loggedIn user
           error: (user, error) ->
-            Ti.API.info "Error signing up (user: #{JSON.stringify user}): #{JSON.stringify error}"
+            Ti.API.debug "Error signing up (user: #{JSON.stringify user}): #{JSON.stringify error}"
             failed error
       else
-        Ti.API.info 'Already exists'
+        Ti.API.debug 'Already exists'
         Parse.User.logIn $.username.value, $.password.value,
           success: (user) ->
-            Ti.API.info "Logged in: " + JSON.stringify user
+            Ti.API.debug "Logged in: " + JSON.stringify user
             loggedIn user
           error: (user, error) ->
-            Ti.API.info "Error logging in (user: #{JSON.stringify user}): #{JSON.stringify error}"
+            Ti.API.debug "Error logging in (user: #{JSON.stringify user}): #{JSON.stringify error}"
             failed error
 
     error: (error) ->

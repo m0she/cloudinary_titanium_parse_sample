@@ -19,13 +19,11 @@ get_transformations = (width, height) ->
 render = ->
   size = $.getView().size
 
-  Ti.API.info "Showing photo: #{identifier}"
   tabs = (Alloy.createController "image_tab",
     identifier: identifier
     name: name_transformation[0]
     transformation: name_transformation[1]
   .getView() for name_transformation in get_transformations(size.width - 10, size.height - 10))
-  Ti.API.info " Tabs: #{JSON.stringify tabs}"
 
   scrollable = Ti.UI.createScrollableView
     views: tabs
@@ -36,12 +34,6 @@ render = ->
   while $.toplevel.children.length > 0
     $.toplevel.remove($.toplevel.children[0])
   $.toplevel.add scrollable
-
-  # Debug:
-  for event in ['open', 'close', 'postlayout', 'focus']
-    title = identifier
-    do (event) -> $.getView().addEventListener event, (data) -> Ti.API.log "#{title} #{event}: #{data}"
-
 
 lastWidth = 0
 $.getView().addEventListener 'postlayout', (e) =>

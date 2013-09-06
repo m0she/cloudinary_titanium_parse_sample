@@ -45,7 +45,7 @@ exports.CollectionView = (function(_super) {
 
   CollectionView.prototype.render = function() {
     var _this = this;
-    Ti.API.info("Rendering... width: " + (this.container.getView().size.width));
+    Ti.API.debug("Rendering... width: " + (this.container.getView().size.width));
     this.digestOptions(this.options);
     this.container.getView().hide();
     this.container.clear();

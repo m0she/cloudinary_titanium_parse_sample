@@ -5,12 +5,11 @@ cloudinary = require('/lib/cloudinary');
 config = require('config').config;
 
 init = function(options) {
-  var cloudinary_options, event, identifier, title, url, view, _i, _len, _ref, _results,
+  var cloudinary_options, identifier, url, view,
     _this = this;
   view = $.getView();
   options = _.clone(options);
   delete options.collection;
-  Ti.API.info("Creating grid_child: " + (JSON.stringify(options)) + " " + view + " " + options.image);
   if (options.space) {
     view.right = view.bottom = options.space;
   }
@@ -28,28 +27,13 @@ init = function(options) {
       cloudinary_options.crop = "fill";
     }
     url = cloudinary.utils.url_from_identifier(identifier, cloudinary_options);
-    Ti.API.info("Cloudinary url: " + url);
     view.image = url;
-    view.addEventListener('click', function() {
+    return view.addEventListener('click', function() {
       return Alloy.createController("show_photo", identifier).getView().open();
     });
   } else if (options.image_path) {
-    view.image = options.image_path;
+    return view.image = options.image_path;
   }
-  _ref = ['error', 'load', 'postlayout', 'click'];
-  _results = [];
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    event = _ref[_i];
-    title = options.title;
-    _results.push((function(event) {
-      return view.addEventListener(event, function(data) {
-        return Ti.API.log("" + title + " " + event + ": " + data + " " + (JSON.stringify(data)));
-      });
-    })(event));
-  }
-  return _results;
 };
 
 init.apply(this, arguments);
-
-Ti.API.info("Created grid_child");

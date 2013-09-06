@@ -51,9 +51,8 @@ get_transformations = function(width, height) {
 };
 
 render = function() {
-  var event, name_transformation, scrollable, size, tabs, title, _i, _len, _ref, _results;
+  var name_transformation, scrollable, size, tabs;
   size = $.getView().size;
-  Ti.API.info("Showing photo: " + identifier);
   tabs = (function() {
     var _i, _len, _ref, _results;
     _ref = get_transformations(size.width - 10, size.height - 10);
@@ -68,7 +67,6 @@ render = function() {
     }
     return _results;
   })();
-  Ti.API.info(" Tabs: " + (JSON.stringify(tabs)));
   scrollable = Ti.UI.createScrollableView({
     views: tabs,
     showPagingControl: true,
@@ -78,19 +76,7 @@ render = function() {
   while ($.toplevel.children.length > 0) {
     $.toplevel.remove($.toplevel.children[0]);
   }
-  $.toplevel.add(scrollable);
-  _ref = ['open', 'close', 'postlayout', 'focus'];
-  _results = [];
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    event = _ref[_i];
-    title = identifier;
-    _results.push((function(event) {
-      return $.getView().addEventListener(event, function(data) {
-        return Ti.API.log("" + title + " " + event + ": " + data);
-      });
-    })(event));
-  }
-  return _results;
+  return $.toplevel.add(scrollable);
 };
 
 lastWidth = 0;

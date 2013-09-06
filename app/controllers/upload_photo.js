@@ -8,7 +8,7 @@ PhotoObject = require('parse_photo_album').PhotoObject;
 
 handle_error = function(error) {
   var dialog;
-  Ti.API.warn("Error: " + (JSON.stringify(error)));
+  Ti.API.info("Error: " + (JSON.stringify(error)));
   dialog = Ti.UI.createAlertDialog({
     message: error.message || error,
     title: 'Error uploading image',
@@ -23,24 +23,23 @@ handle_error = function(error) {
 upload_image = function(image) {
   var image_file;
   image_file = image.media.nativePath;
-  Ti.API.info("Signing " + image + " " + image_file + " " + (JSON.stringify(image)));
+  Ti.API.debug("Signing " + image_file);
   return Parse.Cloud.run(config.parse_sign_cloud_function, {}, {
     success: function(sign_result) {
-      Ti.API.info("sign finished: " + (JSON.stringify(sign_result)));
-      Ti.API.info("Uploading: " + (JSON.stringify(image_file)));
+      Ti.API.debug("Uploading: " + (JSON.stringify(sign_result)));
       return cloudinary.uploader.upload(image_file, function(upload_result) {
         var obj, signed;
-        Ti.API.info("Upload done " + (JSON.stringify(upload_result)));
+        Ti.API.debug("Upload done: " + (JSON.stringify(upload_result)));
         if (upload_result.error) {
           return handle_error(upload_result.error);
         }
         obj = new PhotoObject;
         signed = cloudinary.utils.signed_preloaded_image(upload_result);
         obj.set(config.parse_cloudinary_field, signed);
-        Ti.API.debug("Signed: " + signed);
-        obj.save(null, {
+        Ti.API.debug("Saving: " + signed);
+        return obj.save(null, {
           success: function() {
-            Ti.API.info("Model save successful!");
+            Ti.API.debug("Model save successful!");
             $.getView().fireEvent("uploaded_image");
             return $.getView().close();
           },
@@ -48,7 +47,6 @@ upload_image = function(image) {
             return handle_error(error);
           }
         });
-        return Ti.API.info("Upload finished: " + (JSON.stringify(arguments)));
       }, sign_result);
     },
     error: function(error) {
@@ -58,7 +56,7 @@ upload_image = function(image) {
 };
 
 pick_image = function() {
-  Ti.API.info("Picking up an image");
+  Ti.API.debug("Picking up an image");
   return Ti.Media.openPhotoGallery({
     mediaTypes: [Ti.Media.MEDIA_TYPE_PHOTO],
     success: function(data) {
@@ -70,7 +68,7 @@ pick_image = function() {
       };
     },
     cancel: function() {
-      Ti.API.info('pick_image cancel');
+      Ti.API.debug('pick_image cancel');
       return $.getView().close();
     }
   });
