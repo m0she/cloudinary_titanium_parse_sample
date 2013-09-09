@@ -1,5 +1,10 @@
 <Alloy>
   <Window fullscreen="false" exitOnClose="true">
-    <View id="container" />
+    <NavigationGroup id="nav" platform="ios">
+      <Window id="ios_list_window" title="List photos">
+        <View id="container" />
+      </Window>
+    </NavigationGroup>
+    <View id="container" platform="android"/>
   </Window>
 </Alloy>

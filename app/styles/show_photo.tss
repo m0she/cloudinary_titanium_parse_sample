@@ -1,4 +1,5 @@
 "#toplevel" : {
 	height: Ti.UI.FILL,
-	width: Ti.UI.FILL
+	width: Ti.UI.FILL,
+  backgroundColor: "#000"
 }

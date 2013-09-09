@@ -19,7 +19,7 @@ init = (options) ->
     url = cloudinary.utils.url_from_identifier identifier, cloudinary_options
     view.image = url
     view.addEventListener 'click', =>
-      Alloy.createController("show_photo", identifier).getView().open()
+      Ti.App.fireEvent 'child_clicked', identifier: identifier
   else if options.image_path
     view.image = options.image_path
 

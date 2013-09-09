@@ -30,6 +30,15 @@ init = function() {
       });
     });
   });
+  Ti.App.addEventListener('child_clicked', function(e) {
+    var show_photo_window;
+    show_photo_window = Alloy.createController("show_photo", e.identifier).getView();
+    if (Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad') {
+      return $.nav.open(show_photo_window);
+    } else {
+      return show_photo_window.open();
+    }
+  });
   _ref = ['open', 'close'];
   _results = [];
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {

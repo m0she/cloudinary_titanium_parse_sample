@@ -19,6 +19,13 @@ init = ->
       upload_photo.getView().addEventListener "uploaded_image", ->
         collection.fetch()
 
+  Ti.App.addEventListener 'child_clicked', (e) ->
+    show_photo_window = Alloy.createController("show_photo", e.identifier).getView()
+    if Ti.Platform.osname == 'iphone' or Ti.Platform.osname == 'ipad'
+      $.nav.open show_photo_window
+    else
+      show_photo_window.open()
+
   # Debug:
   for event in ['open', 'close']
     title = 'list_photos - '
