@@ -27,7 +27,8 @@ failed = (error) ->
   .show()
   $.submit.enabled = true
 
-@doSubmit = (e) ->
+# Upon submission of login form - Tries to register/login using parse
+doSubmit = (e) ->
   $.submit.enabled = false
   Ti.API.debug 'login submit'
   query = new Parse.Query(Parse.User).equalTo "username", $.username.value

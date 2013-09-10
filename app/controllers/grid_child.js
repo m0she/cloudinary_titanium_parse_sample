@@ -9,7 +9,6 @@ init = function(options) {
     _this = this;
   view = $.getView();
   options = _.clone(options);
-  delete options.collection;
   if (options.space) {
     view.right = view.bottom = options.space;
   }

@@ -53,21 +53,11 @@ exports.CollectionView = (function(_super) {
       return _this.container.addChild(_this.createChild(model.toJSON()).getView());
     });
     this.container.getView().show();
-    return Ti.App.fireEvent('render');
+    return Ti.App.fireEvent('grid_view_render');
   };
 
   CollectionView.prototype.getView = function() {
     return this.container.getView();
-  };
-
-  CollectionView.prototype.digestOptions = function(options) {
-    var width;
-    if (options.space == null) {
-      options.space = 0;
-    }
-    if (options.columns && (width = this.container.getView().size.width) > 0) {
-      return options.sideSize = ((width - options.space) / options.columns) - options.space;
-    }
   };
 
   return CollectionView;
@@ -87,6 +77,16 @@ exports.GridView = (function(_super) {
     space: 5,
     columns: 4,
     childController: 'grid_child'
+  };
+
+  GridView.prototype.digestOptions = function(options) {
+    var width;
+    if (options.space == null) {
+      options.space = 0;
+    }
+    if (options.columns && (width = this.container.getView().size.width) > 0) {
+      return options.sideSize = ((width - options.space) / options.columns) - options.space;
+    }
   };
 
   return GridView;

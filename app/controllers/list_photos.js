@@ -1,4 +1,4 @@
-var GridView, PhotoCollection, grid, init, open_controller, open_view, show_photo, upload_photo,
+var GridView, PhotoCollection, add_upload_button, grid, init, open_controller, open_view, show_photo, upload_photo,
   __slice = [].slice;
 
 GridView = require('grid_view').GridView;
@@ -6,6 +6,16 @@ GridView = require('grid_view').GridView;
 grid = void 0;
 
 PhotoCollection = require('parse_photo_album').PhotoCollection;
+
+add_upload_button = function() {
+  var child, options;
+  options = _.extend({
+    image_path: '/images/add_new_photo.png',
+    type: 'add_photo'
+  }, grid.options);
+  child = Alloy.createController('grid_child', options);
+  return grid.container.addChild(child.getView());
+};
 
 open_view = function(view) {
   if (Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad') {
@@ -30,21 +40,15 @@ show_photo = function(identifier) {
 };
 
 init = function() {
-  var collection, event, title, _i, _len, _ref, _results;
+  var collection;
   collection = new PhotoCollection;
   grid = new GridView({
     collection: collection
   });
   $.container.add(grid.getView());
   collection.fetch();
-  Ti.App.addEventListener('render', function() {
-    var child, options;
-    options = _.extend({
-      image_path: '/images/add_new_photo.png',
-      type: 'add_photo'
-    }, grid.options);
-    child = Alloy.createController('grid_child', options);
-    return grid.container.addChild(child.getView());
+  Ti.App.addEventListener('grid_view_render', function() {
+    return add_upload_button();
   });
   Ti.App.addEventListener('child_clicked', function(e) {
     if (e.data.type === 'add_photo') {
@@ -54,21 +58,9 @@ init = function() {
       return show_photo(e.identifier);
     }
   });
-  Ti.App.addEventListener('uploaded_image', function() {
+  return Ti.App.addEventListener('uploaded_image', function() {
     return collection.fetch();
   });
-  _ref = ['open', 'close'];
-  _results = [];
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    event = _ref[_i];
-    title = 'list_photos - ';
-    _results.push((function(event) {
-      return $.getView().addEventListener(event, function(data) {
-        return Ti.API.debug("" + title + " " + event + ": " + data);
-      });
-    })(event));
-  }
-  return _results;
 };
 
 init();

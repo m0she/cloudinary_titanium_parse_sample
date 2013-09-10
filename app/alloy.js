@@ -1,3 +1,7 @@
+/*
+# Initializes Parse and cloudinary using configuration (app/lib/config.coffee.sample)
+*/
+
 var cloudinary, config;
 
 config = require('config').config;

@@ -4,7 +4,7 @@
     <TextField id="password" hintText="Password" passwordMask="true" />
     <View layout="horizontal" id="signin_row">
       <ImageView id="poweredby" />
-      <Button id="submit" title="Sign in or register" onClick="this.doSubmit" />
+      <Button id="submit" title="Sign in or register" onClick="doSubmit" />
     </View>
   </Window>
 </Alloy>

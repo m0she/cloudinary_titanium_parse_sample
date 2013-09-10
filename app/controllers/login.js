@@ -1,4 +1,4 @@
-var cloudinary, failed, init, loggedIn;
+var cloudinary, doSubmit, failed, init, loggedIn;
 
 require('ti.parse');
 
@@ -36,7 +36,7 @@ failed = function(error) {
   return $.submit.enabled = true;
 };
 
-this.doSubmit = function(e) {
+doSubmit = function(e) {
   var query;
   $.submit.enabled = false;
   Ti.API.debug('login submit');

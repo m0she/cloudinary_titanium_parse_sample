@@ -15,6 +15,8 @@ class exports.CollectionView extends Parse.Events
     @container = @createContainer()
     lastWidth = 0
     @container.getView().addEventListener 'postlayout', (e) =>
+      # Call rendering process when width is updated (both on initial layout
+      # and on orientation changes)
       newWidth = @container.getView().size.width
       if lastWidth != newWidth
         @render()
@@ -28,20 +30,12 @@ class exports.CollectionView extends Parse.Events
     @digestOptions @options
     @container.getView().hide()
     @container.clear()
-    # DEBUG -
-    #for index in [0..10]
-    #  @container.addChild @createChild(@collection.at(index).toJSON()).getView() if @collection.length > index
     @collection.each (model) =>
       @container.addChild @createChild(model.toJSON()).getView()
     @container.getView().show()
-    Ti.App.fireEvent 'render'
+    Ti.App.fireEvent 'grid_view_render'
 
   getView: -> @container.getView()
-
-  digestOptions: (options) ->
-    options.space ?= 0
-    if options.columns && (width = @container.getView().size.width) > 0
-      options.sideSize = ((width - options.space) / options.columns) - options.space
 
 class exports.GridView extends exports.CollectionView
   defaults:
@@ -49,4 +43,9 @@ class exports.GridView extends exports.CollectionView
     space: 5
     columns: 4
     childController: 'grid_child'
+
+  digestOptions: (options) ->
+    options.space ?= 0
+    if options.columns && (width = @container.getView().size.width) > 0
+      options.sideSize = ((width - options.space) / options.columns) - options.space
 

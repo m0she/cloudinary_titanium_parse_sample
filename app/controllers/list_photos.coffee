@@ -2,6 +2,11 @@ GridView = require('grid_view').GridView
 grid = undefined
 PhotoCollection = require('parse_photo_album').PhotoCollection
 
+add_upload_button = () ->
+  options = _.extend image_path: '/images/add_new_photo.png', type: 'add_photo', grid.options
+  child = Alloy.createController('grid_child', options)
+  grid.container.addChild child.getView()
+
 open_view = (view) ->
   if Ti.Platform.osname == 'iphone' or Ti.Platform.osname == 'ipad'
     $.nav.open view
@@ -24,23 +29,18 @@ init = ->
   $.container.add grid.getView()
   collection.fetch()
 
-  Ti.App.addEventListener 'render', ->
-    options = _.extend image_path: '/images/add_new_photo.png', type: 'add_photo', grid.options
-    child = Alloy.createController('grid_child', options)
-    grid.container.addChild child.getView()
+  Ti.App.addEventListener 'grid_view_render', ->
+    return add_upload_button()
 
   Ti.App.addEventListener 'child_clicked', (e) ->
     return upload_photo() if e.data.type == 'add_photo'
     return show_photo(e.identifier) if e.identifier
 
   Ti.App.addEventListener 'uploaded_image', ->
+    # Image added - Refresh collection
     collection.fetch()
-
-  # Debug:
-  for event in ['open', 'close']
-    title = 'list_photos - '
-    do (event) -> $.getView().addEventListener event, (data) -> Ti.API.debug "#{title} #{event}: #{data}"
 
 init()
 if Ti.Platform.osname == 'android'
+  # Use Android back button - no need for navigation bar
   $.getView().navBarHidden = true

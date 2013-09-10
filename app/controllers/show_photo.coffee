@@ -16,6 +16,10 @@ get_transformations = (width, height) ->
     ]]
   ]
 
+empty_container = () ->
+  while $.toplevel.children.length > 0
+    $.toplevel.remove($.toplevel.children[0])
+
 render = ->
   size = $.getView().size
 
@@ -31,16 +35,18 @@ render = ->
     height: Ti.UI.FILL
     width: Ti.UI.FILL
 
-  while $.toplevel.children.length > 0
-    $.toplevel.remove($.toplevel.children[0])
+  empty_container()
   $.toplevel.add scrollable
 
 lastWidth = 0
 $.getView().addEventListener 'postlayout', (e) =>
+  # Call rendering process when width is updated (both on initial layout
+  # and on orientation changes)
   newWidth = $.getView().size.width
   if lastWidth != newWidth and newWidth > 0
     render()
     lastWidth = newWidth
 
 if Ti.Platform.osname == 'android'
+  # Use Android back button - no need for navigation bar
   $.getView().navBarHidden = true

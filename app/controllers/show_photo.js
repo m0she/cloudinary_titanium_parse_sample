@@ -1,4 +1,4 @@
-var get_transformations, identifier, lastWidth, render,
+var empty_container, get_transformations, identifier, lastWidth, render,
   _this = this;
 
 identifier = arguments[0];
@@ -50,6 +50,15 @@ get_transformations = function(width, height) {
   ];
 };
 
+empty_container = function() {
+  var _results;
+  _results = [];
+  while ($.toplevel.children.length > 0) {
+    _results.push($.toplevel.remove($.toplevel.children[0]));
+  }
+  return _results;
+};
+
 render = function() {
   var name_transformation, scrollable, size, tabs;
   size = $.getView().size;
@@ -73,9 +82,7 @@ render = function() {
     height: Ti.UI.FILL,
     width: Ti.UI.FILL
   });
-  while ($.toplevel.children.length > 0) {
-    $.toplevel.remove($.toplevel.children[0]);
-  }
+  empty_container();
   return $.toplevel.add(scrollable);
 };
 

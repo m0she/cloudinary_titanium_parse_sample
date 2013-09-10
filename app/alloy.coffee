@@ -1,3 +1,6 @@
+###
+# Initializes Parse and cloudinary using configuration (app/lib/config.coffee.sample)
+###
 config = require('config').config
 require '/ti.parse'
 cloudinary = require '/lib/cloudinary'

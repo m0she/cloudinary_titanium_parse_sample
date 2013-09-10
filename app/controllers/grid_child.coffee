@@ -4,7 +4,6 @@ config = require('config').config
 init = (options) ->
   view = $.getView()
   options = _.clone options
-  delete options.collection
 
   view.right = view.bottom = options.space if options.space
   view.padding = options.padding if options.padding
