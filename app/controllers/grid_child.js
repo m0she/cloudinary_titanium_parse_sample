@@ -28,14 +28,15 @@ init = function(options) {
     }
     url = cloudinary.utils.url_from_identifier(identifier, cloudinary_options);
     view.image = url;
-    return view.addEventListener('click', function() {
-      return Ti.App.fireEvent('child_clicked', {
-        identifier: identifier
-      });
-    });
   } else if (options.image_path) {
-    return view.image = options.image_path;
+    view.image = options.image_path;
   }
+  return view.addEventListener('click', function() {
+    return Ti.App.fireEvent('child_clicked', {
+      identifier: identifier,
+      data: options
+    });
+  });
 };
 
 init.apply(this, arguments);

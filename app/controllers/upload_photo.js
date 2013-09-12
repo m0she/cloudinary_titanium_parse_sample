@@ -40,7 +40,7 @@ upload_image = function(image) {
         return obj.save(null, {
           success: function() {
             Ti.API.debug("Model save successful!");
-            $.getView().fireEvent("uploaded_image");
+            Ti.App.fireEvent("uploaded_image");
             return $.getView().close();
           },
           error: function(error) {

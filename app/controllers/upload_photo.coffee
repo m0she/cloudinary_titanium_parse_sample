@@ -29,7 +29,7 @@ upload_image = (image) ->
         obj.save null,
           success: ->
             Ti.API.debug "Model save successful!"
-            $.getView().fireEvent "uploaded_image"
+            Ti.App.fireEvent "uploaded_image"
             $.getView().close()
           error: (error) ->
             handle_error(error)

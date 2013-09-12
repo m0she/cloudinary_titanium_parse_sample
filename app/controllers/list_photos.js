@@ -1,10 +1,33 @@
-var GridView, PhotoCollection, grid, init;
+var GridView, PhotoCollection, grid, init, open_controller, open_view, show_photo, upload_photo,
+  __slice = [].slice;
 
 GridView = require('grid_view').GridView;
 
 grid = void 0;
 
 PhotoCollection = require('parse_photo_album').PhotoCollection;
+
+open_view = function(view) {
+  if (Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad') {
+    return $.nav.open(view);
+  } else {
+    return view.open();
+  }
+};
+
+open_controller = function() {
+  var controller_args;
+  controller_args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+  return open_view(Alloy.createController.apply(Alloy, controller_args).getView());
+};
+
+upload_photo = function() {
+  return open_controller("upload_photo");
+};
+
+show_photo = function(identifier) {
+  return open_controller("show_photo", identifier);
+};
 
 init = function() {
   var collection, event, title, _i, _len, _ref, _results;
@@ -15,29 +38,24 @@ init = function() {
   $.container.add(grid.getView());
   collection.fetch();
   Ti.App.addEventListener('render', function() {
-    var options, view;
+    var child, options;
     options = _.extend({
-      image_path: '/images/add_new_photo.png'
+      image_path: '/images/add_new_photo.png',
+      type: 'add_photo'
     }, grid.options);
-    view = Alloy.createController('grid_child', options).getView();
-    grid.container.addChild(view);
-    return view.on('click', function() {
-      var upload_photo;
-      upload_photo = Alloy.createController("upload_photo");
-      upload_photo.getView().open();
-      return upload_photo.getView().addEventListener("uploaded_image", function() {
-        return collection.fetch();
-      });
-    });
+    child = Alloy.createController('grid_child', options);
+    return grid.container.addChild(child.getView());
   });
   Ti.App.addEventListener('child_clicked', function(e) {
-    var show_photo_window;
-    show_photo_window = Alloy.createController("show_photo", e.identifier).getView();
-    if (Ti.Platform.osname === 'iphone' || Ti.Platform.osname === 'ipad') {
-      return $.nav.open(show_photo_window);
-    } else {
-      return show_photo_window.open();
+    if (e.data.type === 'add_photo') {
+      return upload_photo();
     }
+    if (e.identifier) {
+      return show_photo(e.identifier);
+    }
+  });
+  Ti.App.addEventListener('uploaded_image', function() {
+    return collection.fetch();
   });
   _ref = ['open', 'close'];
   _results = [];

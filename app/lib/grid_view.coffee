@@ -24,7 +24,7 @@ class exports.CollectionView extends Parse.Events
   createChild: (params) -> Alloy.createController @options.childController, _.extend {}, @options, params
 
   render: ->
-    Ti.API.debug "Rendering... width: #{@container.getView().size.width}"
+    Ti.API.debug "Rendering... width: #{@container.getView().size.width}. items: #{@collection.length}"
     @digestOptions @options
     @container.getView().hide()
     @container.clear()
